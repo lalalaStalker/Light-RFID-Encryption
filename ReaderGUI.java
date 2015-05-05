@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 
@@ -22,6 +23,9 @@ public class ReaderGUI {
 	private static int WIDTH = 700;
 	private static int HEIGHT = 650;
 	private static ArrayList<String> tagIDs = new ArrayList<String>();
+	public static ArrayList<Tag> tagList = new ArrayList<Tag>();
+	public static Reader reader = new Reader();
+	
 	
 	
 	/**
@@ -38,6 +42,14 @@ public class ReaderGUI {
 	
 	public ArrayList<String> getTagList(){
 		return tagIDs;
+	}
+	
+	public void addTag(Tag tag) {
+		this.tagList.add(tag);
+	}
+	
+	public void addId(String id) {
+		this.tagIDs.add(id);
 	}
 	
 
@@ -58,6 +70,7 @@ public class ReaderGUI {
 		
 		/*Set up window*/
 		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize( WIDTH, HEIGHT);
 		frame.setTitle("RFID Reader");
 //		frame.setDefaultCloseOperation( EXIT_ON_CLOSE);//////////////////// WTF, WHY DON'T YOU WORK??/////////
@@ -85,7 +98,7 @@ public class ReaderGUI {
 		upper.add( instructions, upperGBC);
 
 		/*List of tags to read*/
-		JComboBox<String> tagList = new JComboBox<String>( tagIDs.toArray( new String[ tagIDs.size()]));
+		final JComboBox<String> tagList = new JComboBox<String>( tagIDs.toArray( new String[ tagIDs.size()]));
 //		tagList.setBackground( new Color( 250, 250, 250));
 		upperGBC.insets = new Insets( 20, 50, 20, 5); //top,left,bottom,right
 		upperGBC.fill = GridBagConstraints.VERTICAL;
@@ -96,7 +109,8 @@ public class ReaderGUI {
 		tagList.setSelectedItem( tagIDs.get(0));
 		
 		/*Output text*/
-		final JTextField outputArea = new JTextField( "Message Received Area");
+		final JTextArea outputArea = new JTextArea( "Message Received Area");
+		outputArea.setEditable(false);
 		outputArea.setPreferredSize( new Dimension( 550,250));
 		lowerGBC.fill = GridBagConstraints.HORIZONTAL;
 		lowerGBC.gridwidth = GridBagConstraints.REMAINDER;
@@ -112,8 +126,11 @@ public class ReaderGUI {
 		readButton.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent e) {
 				///////////////////////////// ADD CODE TO SEND THE REQUEST, RECEIVE, AND DECRYPT//////////////////
-				
-				outputArea.setText( new String( getTextOutput()));
+				Tag tag = ReaderGUI.tagList.get(tagList.getSelectedIndex());
+				Book book[] = ReaderGUI.reader.readAllInfo(tag);
+				outputArea.setText( book[0].toString() );
+				outputArea.append("\n\n");
+				outputArea.append(book[1].toString());
 				outputArea.repaint();
 			}
 		});
@@ -124,12 +141,5 @@ public class ReaderGUI {
 		pane.add( upper);
 		pane.add( lower);	
 		frame.setVisible( true);
-	}
-	
-	public static void main( String a[]){
-		
-		ReaderGUI rg = new ReaderGUI();
-		rg.setTagList(new String[] {"112358", "3141592", "324252", "9512369","8520789", "456753","66552233", "1014458"});
-		rg.setUp();
 	}
 }
