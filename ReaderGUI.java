@@ -17,7 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
+/**
+ * Creates a GUI for the Lightweight RFID Encryption scheme.
+ */
 public class ReaderGUI {
 
 	private static int WIDTH = 700;
