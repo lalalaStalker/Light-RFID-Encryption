@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 
+/**
+ * An object that receives encrypted messages from a Reader, and 
+ * encrypts and sends messages to a Reader.
+ */
 public class Tag {
 	
 	private final String CHARSET = "UTF-8";
@@ -28,7 +32,7 @@ public class Tag {
 		
 	}
 	
-	public Tag(	int id, String title, long isbn, String author, int libId, 
+	public Tag( int id, String title, long isbn, String author, int libId, 
 				int libMedia, String publishDate) {
 		
 		this.id = id;
@@ -46,6 +50,10 @@ public class Tag {
 		this.message = message;
 	}
 	
+	/**
+	 * Respond to message
+	 * @param Boolean to signify if padded msg or not
+	 */
 	public boolean respond() {
 		
 		boolean padded = false;
@@ -136,6 +144,11 @@ public class Tag {
 		}
 	}
 	
+	/**
+	 * Encrypts a plaintext byte array into a ciphertext BitSet
+	 * @param plaintext byte array
+	 * @return Encrypted BitSet
+	 */
 	public BitSet encrypt(byte[] plaintext) {
 		
 		BitSet d = BitSet.valueOf(plaintext);
@@ -189,12 +202,11 @@ public class Tag {
 		this.key2 = newKey;
 	}
 	
-	//************************ REGULAR DATA BELLOW ***************************
+	//************************ REGULAR DATA BELOW ***************************
 	
 	public void getId() {
 		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
 		buffer.putInt(this.id);
-//		System.out.println("EGG\t"+ this.id + "   " + Arrays.toString(buffer.array()));
 		this.response = buffer.array();
 	}
 
