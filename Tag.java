@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 
+/**
+ * An object that receives encrypted messages from a Reader, and 
+ * encrypts and sends messages to a Reader.
+ */
 public class Tag {
 	
 	private final String CHARSET = "UTF-8";
@@ -28,7 +32,7 @@ public class Tag {
 		
 	}
 	
-	public Tag(	int id, String title, long isbn, String author, int libId, 
+	public Tag( int id, String title, long isbn, String author, int libId, 
 				int libMedia, String publishDate) {
 		
 		this.id = id;
@@ -46,6 +50,10 @@ public class Tag {
 		this.message = message;
 	}
 	
+	/**
+	 * Respond to message
+	 * @param Boolean to signify if padded msg or not
+	 */
 	public boolean respond() {
 		
 		boolean padded = false;
@@ -93,76 +101,40 @@ public class Tag {
 	 */
 	public byte[] decrypt(BitSet ciphertext, int len) {
 		
-//		System.out.print("Received: ");
-//		Utils.print(ciphertext, len);
-//		
-//		System.out.print("K1: ");
-//		Utils.print(key, 32);
-//		System.out.print("K2: ");
-//		Utils.print(key2, 32);
-		
 		BitSet[] arr = Crypto.separate(ciphertext, this.key, len);
-		
-//		System.out.print("A: ");
-//		Utils.print(arr[0], 32);
-//		System.out.print("B: ");
-//		Utils.print(arr[1], 32);
-//		System.out.print("C: ");
-//		Utils.print(arr[2], 32);
-		
+
 		BitSet pr = (BitSet)arr[2].clone();
 		BitSet n = (BitSet)arr[0].clone();
 		
-//		System.out.println("Plaintext: ");
-//		Utils.print(pr, 32);
 		pr.xor(this.key2);
-//		System.out.print("Pl: ");
-//		Utils.print(pr, len / 3);
-		
+
 		n.xor(pr);
 		n.xor(this.key1);
 		
 		this.presevedRandomNumber = (BitSet)arr[1].clone();
-//		System.out.print("Arr[1]: ");
-//		Utils.print(preseved, 32);
-		
+
 		if(n.equals(arr[1])) {
-//			System.out.println("SUCCESS TAG");
 			return pr.toByteArray();
 		}
 		else {
-//			System.out.println("FAILURE TAG\n");
 			return null;			
 		}
 	}
 	
+	/**
+	 * Encrypts a plaintext byte array into a ciphertext BitSet
+	 * @param plaintext byte array
+	 * @return Encrypted BitSet
+	 */
 	public BitSet encrypt(byte[] plaintext) {
 		
 		BitSet d = BitSet.valueOf(plaintext);
 		BitSet e = BitSet.valueOf(plaintext);
 		BitSet reverse = Utils.reverseOrder(this.key1, this.key2, plaintext.length * 8);
-		
-//		System.out.print("Plaintext: ");
-//		Utils.print(d, message.length * 8);
-//		System.out.print("E: ");
-//		Utils.print(e, message.length * 8);
-//		System.out.println("Random: ");
-//		Utils.print(presevedRandomNumber, message.length * 8);
-		
-		
+
 		d.xor(this.presevedRandomNumber);
 		d.xor(this.key2);
 		e.xor(this.key1);
-		
-//		System.out.println("\n\nKey: ");
-//		Utils.print(this.key, plaintext.length * 2 * 8);
-//		System.out.println("RevKey: ");
-//		Utils.print(reverse, plaintext.length * 2 * 8);
-//		System.out.println("Key1: ");
-//		Utils.print(key1, plaintext.length * 8);
-//		System.out.println("Key2: ");
-//		Utils.print(key2, plaintext.length * 8);
-//		System.out.println();
 		
 		return Crypto.merge(d, e, this.presevedRandomNumber, reverse, plaintext.length * 8);
 	}
@@ -189,12 +161,11 @@ public class Tag {
 		this.key2 = newKey;
 	}
 	
-	//************************ REGULAR DATA BELLOW ***************************
+	//************************ REGULAR DATA BELOW ***************************
 	
 	public void getId() {
 		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
 		buffer.putInt(this.id);
-//		System.out.println("EGG\t"+ this.id + "   " + Arrays.toString(buffer.array()));
 		this.response = buffer.array();
 	}
 

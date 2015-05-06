@@ -17,7 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
+/**
+ * Creates a GUI for the Lightweight RFID Encryption scheme.
+ */
 public class ReaderGUI {
 
 	private static int WIDTH = 700;
@@ -99,7 +101,6 @@ public class ReaderGUI {
 
 		/*List of tags to read*/
 		final JComboBox<String> tagList = new JComboBox<String>( tagIDs.toArray( new String[ tagIDs.size()]));
-//		tagList.setBackground( new Color( 250, 250, 250));
 		upperGBC.insets = new Insets( 20, 50, 20, 5); //top,left,bottom,right
 		upperGBC.fill = GridBagConstraints.VERTICAL;
 		upperGBC.gridx = 2;

@@ -109,53 +109,25 @@ public class Reader {
 		a.xor(this.key1);
 		b.xor(this.key2);
 		
-//		System.out.print("A: ");
-//		Utils.print(a, 32);
-//		System.out.print("n: ");
-//		Utils.print(random, 32);
-//		System.out.print("B: ");
-//		Utils.print(b, 32);
-//		
-//		System.out.println("=====================");
-//		this.messageLength = plaintext.length * 8;
 		return Crypto.merge(a, this.random, b, key, plaintext.length * 8);
 	}
 	
 	public byte[] decrypt(BitSet ciphertext, int len) {
-		
-//		long[] reverse = Utils.reverseOrder(this.key1.toLongArray(), this.key2.toLongArray());
-//		BitSet reverseKey = BitSet.valueOf(reverse);
-//		Utils.print(ciphertext, len);
+
 		BitSet reverseKey = Utils.reverseOrder(key1, key2, len);
 		
 		BitSet[] arr = Crypto.separate(ciphertext, reverseKey, len * 3);
 		BitSet pt = (BitSet)arr[1].clone();
 		BitSet n = (BitSet)arr[0].clone();
 		
-//		System.out.print("D: ");
-//		Utils.print(arr[0], len);
-//		System.out.print("E: ");
-//		Utils.print(arr[1], len);
-		
 		pt.xor(this.key1);
 		n.xor(pt);
 		n.xor(this.key2);
 		
-//		System.out.print("Plaintext: ");
-//		Utils.print(pt, len);
-//		System.out.print("n:");
-//		Utils.print(n, len);
-//		System.out.print("n´: ");
-//		Utils.print(arr[2], len);
-//		System.out.print("Random: ");
-//		Utils.print(this.random, len);
-		
 		if(n.equals(arr[2])) {
-//			System.out.println("SUCCESS READER");
 			return pt.toByteArray();
 		}
 		else {
-//			System.out.println("FAILURE READER");
 			return null;			
 		}
 	}
@@ -322,22 +294,13 @@ public class Reader {
 		t.setKey2((BitSet)k2.clone());
 		
 		BitSet m = Crypto.merge(a, b, c, k, 24);
-//		System.out.println("********************************");
-//		Utils.print(m, 72);
-//		System.out.println("********************************");
 		
 		BitSet[] arr = Crypto.separate(m, k, 72);
-//		for(int i = 0; i < 3; i++) {
-//			Utils.print(arr[i], 24);
-//		}
 		
 		t.setKey((BitSet)k.clone());
 		t.setRandom((BitSet)b.clone());
 		BitSet s = BitSet.valueOf(t.decrypt(m, 72));
 		
-//		System.out.println("-------------------------");
-//		Utils.print(s, 24);
-//		System.out.println("-------------------------");
 	}
 	
 	public void talk(Tag tag) {
@@ -349,18 +312,11 @@ public class Reader {
 		distributeRandomNumber(tag);
 		
 		byte[] temp = ByteBuffer.allocate(length).putInt(this.numGenerator.nextInt()).array();
-//		Utils.print(BitSet.valueOf(temp), length * 8);
 		BitSet ciphertext = encrypt( temp );
-//		System.out.print("Ciphertext: ");
-//		Utils.print(ciphertext, length * 8);
 		tag.receiveMessage(ciphertext, length * 3 * 8);
-//		tag.getId();
-//		tag.getIsbn();
 		tag.getAuthor();
 		byte[] plaintext = reconstructMessage(tag.respond());
 		
-//		ByteBuffer buffer = ByteBuffer.wrap(plaintext);
-//		long libID = buffer.getLong();
 		String author = new String(plaintext);
 		System.out.println("Author: " + author);
 	}
@@ -377,7 +333,6 @@ public class Reader {
 		
 		byte[] temp = ByteBuffer.allocate(length).array();
 		this.numGenerator.nextBytes(temp);
-//		byte[] temp = ByteBuffer.allocate(length).putLong(this.numGenerator.nextLong()).array();
 		
 		BitSet ciphertext = encrypt( temp );
 		tag.receiveMessage(ciphertext, length * 3 * 8);

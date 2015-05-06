@@ -3,12 +3,6 @@ import java.util.BitSet;
 public class Utils {
 	
 	public static boolean equalTest(BitSet a, BitSet b, int len) {
-//		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
-//		System.out.print("Correct Random:\t\t");
-//		Utils.print(a, len);
-//		System.out.print("Incorrect Random:\t");
-//		Utils.print(b, len);
-//		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
 		a.xor(b);
 		if(a.isEmpty()) {
 			return true;

@@ -1,6 +1,9 @@
 import java.util.BitSet;
 
-
+/**
+ * Operations to merge and separate- decide how/where to move bit
+ * values, based on the bit values in the key.
+ */
 public class Crypto {
 	
 	/**
